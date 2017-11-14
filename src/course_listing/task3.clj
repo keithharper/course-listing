@@ -65,7 +65,7 @@
 	  matched-instructors)))
 
 (defn find-instructor-meetings [courses]
-  (loop [course    (first courses)
+  (loop [course (first courses)
 		 remaining (rest courses)
 		 meetings  []]
 	(if-not (empty? remaining)
