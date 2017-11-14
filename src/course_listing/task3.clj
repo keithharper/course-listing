@@ -101,4 +101,4 @@
 	(partition-by :semester)
 	(find-instructor-pairs)
 	(get-top-instructor-pairs)
-	(print-result)))
+	(print-result))) 
