@@ -65,9 +65,9 @@
 	  matched-instructors)))
 
 (defn find-instructor-meetings [courses]
-  (loop [course (first courses)
-		 remaining (rest courses)
-		 meetings  []]
+  (loop [course		(first courses)
+		 remaining	(rest courses)
+		 meetings	[]]
 	(if-not (empty? remaining)
 	  (let [matched (r/reduce #(check-for-matches %1 %2 course) [] remaining)]
 		(recur
