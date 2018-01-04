@@ -1,6 +1,6 @@
 # course-listing
 
-A Clojure library designed to ... well, that part is up to you.
+A Clojure project that I did for a job on UpWork.
 
 ## Usage
 
