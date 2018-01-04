@@ -37,7 +37,7 @@
 		second-endhour   (:endhour second-course)]
 	(and
 	  (or (= first-starthour second-endhour) (= first-endhour second-starthour))
-	  (not (= first-starthour second-starthour)))))
+	  (not= first-starthour second-starthour))))
 
 (defn same-semester? [[first-course second-course]]
   (let [first-semester  (:semester first-course)
@@ -52,22 +52,22 @@
 (defn different-instructors? [[first-course second-course]]
   (let [first-instructor  (:instructor first-course)
 		second-instructor (:instructor second-course)]
-	(not (= first-instructor second-instructor))))
+	(not= first-instructor second-instructor)))
 
 (defn compare-courses [[first-instructor second-instructor :as courses]]
   ((every-pred same-weekday? start-end-hour-relationship? same-semester? same-room? different-instructors?)
 	courses))
 
 (defn check-for-matches [matched-instructors current-course course-to-match]
-  (let [match? (compare-courses [course-to-match current-course])]
-	(if match?
-	  (conj matched-instructors [(:instructor course-to-match) (:instructor current-course)])
-	  matched-instructors)))
+  (if-let [match? (compare-courses [course-to-match current-course])]
+	(conj matched-instructors [(:instructor course-to-match) (:instructor current-course)])
+	matched-instructors))
+
 
 (defn find-instructor-meetings [courses]
-  (loop [course (first courses)
+  (loop [course    (first courses)
 		 remaining (rest courses)
-		 meetings []]
+		 meetings  []]
 	(if-not (empty? remaining)
 	  (let [matched (r/reduce #(check-for-matches %1 %2 course) [] remaining)]
 		(recur
@@ -80,8 +80,10 @@
 
 (defn find-instructor-pairs [courses]
   (->> courses
-	(pmap find-instructor-meetings)
-	(r/mapcat conj)))
+	(sort-by :room)
+	(partition-by :room)
+	(sort-by :weekday)
+	(pmap find-instructor-meetings)))
 
 (defn get-courses [file]
   (->> file
@@ -96,9 +98,9 @@
   meets another."
   [course-listing-file]
   (println "Finding pairs of instructors...")
-  (->> course-listing-file
-	(get-courses)
+  (->> (get-courses course-listing-file)
 	(partition-by :semester)
-	(find-instructor-pairs)
+	(pmap find-instructor-pairs)
+	(mapcat #(mapcat conj %))
 	(get-top-instructor-pairs)
 	(print-result)))
