@@ -103,4 +103,4 @@
 	(pmap find-instructor-pairs)
 	(mapcat #(mapcat conj %))
 	(get-top-instructor-pairs)
-	(print-result)))
+	(print-result))) 
