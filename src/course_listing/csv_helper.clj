@@ -6,11 +6,13 @@
 
 (defn csv-data->maps [csv-data]
   (map zipmap
-	(->> (first csv-data) ;; First row is the header
-	  (map keyword) ;; Drop if you want string keys instead
-	  repeat)
-	(rest csv-data)))
+       (->> (first csv-data)  ;; First row is the header
+            (map keyword)     ;; Drop if you want string keys instead
+            repeat)
+       (rest csv-data)))
 
 (defn create-map-from-file [file]
-  (csv-data->maps
-	(csv/read-csv (replace-unsafe-chars file) :separator \;)))
+  (-> file
+      (replace-unsafe-chars)
+      (csv/read-csv :separator \;)
+      (csv-data->maps)))
