@@ -21,9 +21,9 @@
 
 (defn get-top-instructor-pairs [instructors]
   (->> instructors
-       (frequencies)
+       frequencies
        (sort-by second)
-       (reverse)
+       reverse
        (take 10)))
 
 (defn same-weekday? [[{first-weekday :weekday} {second-weekday :weekday} first-course second-course]]
@@ -83,8 +83,8 @@
 
 (defn get-courses [file]
   (->> file
-       (slurp)
-       (create-map-from-file)
+       slurp
+       create-map-from-file
        (filter valid-course?)))
 
 (defn main
@@ -94,9 +94,10 @@
   meets another."
   [course-listing-file]
   (println "Finding pairs of instructors...")
-  (->> (get-courses course-listing-file)
+  (->> course-listing-file
+       get-courses
        (partition-by :semester)
        (pmap find-instructor-pairs)
        (mapcat #(mapcat conj %))
-       (get-top-instructor-pairs)
-       (print-result)))
+       get-top-instructor-pairs
+       print-result))
